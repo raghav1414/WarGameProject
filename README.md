@@ -1,0 +1,5 @@
+"# War Card Game Project" 
+"This is a Java-based War Card Game for SYST 17796." 
+"## How to Run" 
+"Compile: javac ca/sheridancollege/project/*.java" 
+"Run: java ca.sheridancollege.project.WarMain" 
