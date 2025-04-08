@@ -4,6 +4,8 @@
  */
 package ca.sheridancollege.project;
 
+import java.util.List;
+
 public class WarPlayer extends Player {
     private WarDeck deck;
 
@@ -22,6 +24,11 @@ public class WarPlayer extends Player {
 
     public WarDeck getDeck() {
         return deck;
+    }
+    public void addCards(List<WarCard> cards) {
+        for (WarCard card : cards) {
+            deck.addCard(card);
+        }
     }
 
     @Override

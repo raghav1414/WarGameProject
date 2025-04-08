@@ -1,8 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ca.sheridancollege.project;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WarGame extends Game {
     private WarPlayer player1;
@@ -17,7 +16,6 @@ public class WarGame extends Game {
     @Override
     public void play() {
         System.out.println("War Game Started...\n");
-
         int round = 1;
 
         while (player1.hasCards() && player2.hasCards()) {
@@ -36,33 +34,53 @@ public class WarGame extends Game {
             System.out.println(player1.getName() + " plays " + card1);
             System.out.println(player2.getName() + " plays " + card2);
 
+            List<WarCard> roundCards = new ArrayList<>();
+            roundCards.add(card1);
+            roundCards.add(card2);
+
             if (card1.getRank() > card2.getRank()) {
                 System.out.println(player1.getName() + " wins the round!\n");
-                player1.getDeck().addCard(card1);
-                player1.getDeck().addCard(card2);
+                player1.addCards(roundCards);
             } else if (card1.getRank() < card2.getRank()) {
                 System.out.println(player2.getName() + " wins the round!\n");
-                player2.getDeck().addCard(card1);
-                player2.getDeck().addCard(card2);
+                player2.addCards(roundCards);
             } else {
                 System.out.println("It's a tie! WAR begins...\n");
-                handleWar();
+                roundCards.addAll(handleWar());
+                
+                if (!player1.hasCards() || !player2.hasCards()) break;
+                WarCard warCard1 = player1.playCard();
+                WarCard warCard2 = player2.playCard();
+                roundCards.add(warCard1);
+                roundCards.add(warCard2);
+
+                System.out.println(player1.getName() + " WAR card: " + warCard1);
+                System.out.println(player2.getName() + " WAR card: " + warCard2);
+
+                if (warCard1.getRank() > warCard2.getRank()) {
+                    System.out.println(player1.getName() + " wins the war!\n");
+                    player1.addCards(roundCards);
+                } else if (warCard1.getRank() < warCard2.getRank()) {
+                    System.out.println(player2.getName() + " wins the war!\n");
+                    player2.addCards(roundCards);
+                } else {
+                    System.out.println("Another tie! No further war logic implemented.\n");
+                }
             }
 
             round++;
-
-            
             if (round > 100) {
-                System.out.println("Game stopping after 100 rounds to prevent infinite loop.");
+                System.out.println("Stopping after 100 rounds to prevent infinite loop.");
                 break;
             }
 
             try {
-                Thread.sleep(300);
+                Thread.sleep(300); 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
         declareWinner();
     }
 
@@ -76,28 +94,14 @@ public class WarGame extends Game {
         }
     }
 
-    private void handleWar() {
-        if (player1.getDeck().getCards().size() < 4 || player2.getDeck().getCards().size() < 4) {
-            System.out.println("Not enough cards for War. Game ends.");
-            return;
+    private List<WarCard> handleWar() {
+        List<WarCard> warPile = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            if (player1.hasCards()) warPile.add(player1.playCard());
+            if (player2.hasCards()) warPile.add(player2.playCard());
         }
 
-        WarCard warCard1 = player1.playCard();
-        WarCard warCard2 = player2.playCard();
-
-        System.out.println(player1.getName() + " places a war card: " + warCard1);
-        System.out.println(player2.getName() + " places a war card: " + warCard2);
-
-        if (warCard1.getRank() > warCard2.getRank()) {
-            System.out.println(player1.getName() + " wins the War round!\n");
-            player1.getDeck().addCard(warCard1);
-            player1.getDeck().addCard(warCard2);
-        } else {
-            System.out.println(player2.getName() + " wins the War round!\n");
-            player2.getDeck().addCard(warCard1);
-            player2.getDeck().addCard(warCard2);
-        }
+        return warPile;
     }
 }
-
-
